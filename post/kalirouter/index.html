@@ -170,13 +170,8 @@ that
 
 <p>We assume that you own an <a href="https://www.amazon.com/Plugable-Gigabit-Ethernet-Network-Adapter/dp/B00AQM8586" target="_blank"> Ethernet LAN Network USB Adapter</a> and a <a href="https://www.amazon.com/gp/product/B004Y6MIXS/ref=oh_aui_detailpage_o00_s00?ie=UTF8&amp;psc=1" target="_blank">wireless B/G/N USB adapter</a>.</p>
 
-<h1 id="intercepting-ip-traffic-originating-from-any-device-app-or-application">Intercepting IP traffic originating from any device, app, or application</h1>
-
 <ul>
 <li><a href="#tldr">TL;DR</a></li>
-<li><a href="#intercepting-ip-traffic-for-any-device-app-or-application">Intercepting IP traffic for any device, app, or application</a>
-
-<ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#setup">Setup</a></li>
 <li><a href="#configuring-kali-linux-as-a-router">Configuring Kali Linux as a Router</a>
@@ -199,16 +194,15 @@ that
 <li><a href="#a-raspberry-pi-kali-router">A Raspberry Pi Kali Router</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 <li><a href="#references">References</a></li>
-</ul></li>
 </ul>
 
-<h2 id="introduction">Introduction</h2>
+<h1 id="introduction">Introduction</h1>
 
 <p>Many of us regularly sniff or intercept traffic coming from embedded devices, mobile apps, or windows applications. For devices or applications that are proxy-aware, interception of traffic is straightforward: we configure the application or device to use our <a href="https://en.wikipedia.org/wiki/Proxy_server" target="_blank">proxy</a>, such as <a href="https://portswigger.net/burp" target="_blank">BurpSuite</a>, and go on with our lives. For devices or applications that are not <a href="https://docstore.mik.ua/orelly/networking_2ndEd/fire/ch09_02.htm" target="_blank">proxy-aware</a>, intercepting traffic is  more challenging.</p>
 
 <p>In this article, we describe how to set up <a href="https://www.kali.org/" target="_blank">Kali Linux</a> to sniff <a href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol" target="_blank">TCP</a>/<a href="https://en.wikipedia.org/wiki/User_Datagram_Protocol" target="_blank">UDP</a> traffic of any device, app, or application by configuring Kali as an intercepting router that can forward specific traffic to a transparent proxy on a different machine, such as HTTP(S) traffic to BurpSuite. Situations where an intercepting router is useful include complex scenarios where many devices and applications interact with each other, such as an embedded device that interacts with a web service, but that can also be configured via a mobile and a windows application. To maximize portability, we implement the above set-up on a Raspberry Pi.</p>
 
-<h2 id="setup">Setup</h2>
+<h1 id="setup">Setup</h1>
 
 <p>We configure Kali Linux as a proxy-aware router. Clients, such as embedded devices or mobile apps, make connections to their servers as they normally would, but interesting packets (e.g. HTTP and HTTPS packets) are intercepted by our Kali Linux machine and redirected to a proxy server (e.g. BurpSuite). All traffic passing through our router is monitored with <a href="https://www.wireshark.org/" target="_blank">Wireshark</a>. Both our Kali Linux machine and BurpSuite act as a transparent proxy as the clients are not aware of their existence. The main advantage of this set-up is that it reduces the configuration of the clients to a minimum. This setup is illustrated in the figure below.</p>
 
@@ -222,7 +216,7 @@ that
 
 <p>The subsequent sections elaborate how we configure our Kali Linux machine as a router and how we monitor devices and applications by connecting them to the Kali Linux router.</p>
 
-<h2 id="configuring-kali-linux-as-a-router">Configuring Kali Linux as a Router</h2>
+<h1 id="configuring-kali-linux-as-a-router">Configuring Kali Linux as a Router</h1>
 
 <p>Our Kali Linux machine will route traffic from the plugged in USB network interfaces (Ethernet and WiFi) to its own Internet connection and vice versa. Creating a router consists of four main parts.
 - Setting up the <strong>Ethernet layer</strong> so that wired clients can connect to Kali&rsquo;s interface.
@@ -250,7 +244,7 @@ unmanaged-devices=mac:d8:eb:97:b6:ce:12;mac:56:6b:a2:90:c4:b9
 <pre><code class="language-shell">$ /etc/init.d/networking restart
 </code></pre>
 
-<h3 id="ethernet">Ethernet</h3>
+<h2 id="ethernet">Ethernet</h2>
 
 <p>Before we create our monitoring network, we select an appropriate network and network mask. Using a different network range than the one of the network our Kali Linux machine connects to (via <code>eth0</code>) ensures that the IP addresses of our monitored devices do not clash with IP addresses used on the main network. We select the <code>172.16.0.0/12</code> network, as our main network interface (<code>eth0</code>) typically receives a <code>10.0.0.0/8</code> (corporate) or a <code>192.168.0.0/16</code> (home) network address.</p>
 
@@ -284,7 +278,7 @@ unmanaged-devices=mac:d8:eb:97:b6:ce:12;mac:56:6b:a2:90:c4:b9
 <pre><code class="language-shell">$ ip addr add 172.16.0.1/12 dev br0
 </code></pre>
 
-<h3 id="wi-fi-data-link-layer">Wi-Fi Data Link Layer</h3>
+<h2 id="wi-fi-data-link-layer">Wi-Fi Data Link Layer</h2>
 
 <p>After configuring the Ethernet interface, we create a wireless access point with the <a href="https://w1.fi/hostapd/" target="_blank"><code>hostapd</code></a> program. We first install it with apt-get.</p>
 
@@ -337,7 +331,7 @@ $ rfkill unblock wlan
 <pre><code class="language-shell">$ hostapd ./hostapd.conf -B
 </code></pre>
 
-<h3 id="network-configuration">Network Configuration</h3>
+<h2 id="network-configuration">Network Configuration</h2>
 
 <p>After configuring our wireless and wired interfaces, we configure Kali to forward traffic to the interface that is configured by VMWare to give Kali access to the Internet (<code>eth0</code>). To do so, we first enable the kernel option for IP forwarding and then tell the <a href="http://ipset.netfilter.org/iptables.man.html" target="_blank"><code>iptables</code></a> program to forward all packets to that interface.</p>
 
@@ -348,7 +342,7 @@ $ iptables -P FORWARD ACCEPT
 $ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 </code></pre>
 
-<h3 id="network-services">Network Services</h3>
+<h2 id="network-services">Network Services</h2>
 
 <p>We use <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank"><code>dnsmasq</code></a> to act as our DNS and DHCP server. We install it with <code>apt-get install dnsmasq</code> and we create a <code>dnsmasq.conf</code> file with the following information.</p>
 
@@ -374,7 +368,7 @@ address=/attacker.com/172.16.0.1
 <pre><code class="language-shell">$ service dnsmasq restart
 </code></pre>
 
-<h2 id="sniffing-and-intercepting-traffic">Sniffing and Intercepting Traffic</h2>
+<h1 id="sniffing-and-intercepting-traffic">Sniffing and Intercepting Traffic</h1>
 
 <p>As all traffic between devices on our monitor network passes via the bridge interface (<code>br0</code>), we can simply run wireshark on that interface to sniff the network traffic. The <code>tshark</code> program is the command-line equivalent of wireshark (We replace <code>tshark</code> with <code>wireshark</code> if we want a graphical user interface).  We listen to traffic on the bridge interface (<code>-i br0</code>) and write all traffic to a file (<code>-w ./output.pcap</code>).</p>
 
@@ -419,7 +413,7 @@ $ iptables -A FORWARD -s 172.16.0.0/12 -d burpip -i br0 -o eth0 -p tcp --dport b
 <p>We go to the request handling tab, redirect traffic to port 443, force use of SSL, and enable support for invisible proxying.
 <img src="/pics/burpsuite443_proxy.png" alt="Enable Invisible Proxying for BurpSuite" /></p>
 
-<h2 id="automation">Automation</h2>
+<h1 id="automation">Automation</h1>
 
 <p>As we are lazy, we automate anything that we are going to do more than once. You can find the <a href="https://github.com/koenbuyens/kalirouter/tree/master/conf" target="_blank">configuration files</a> and the <a href="https://github.com/koenbuyens/kalirouter/blob/master/monitor.sh" target="_blank">script</a> on <a href="https://github.com/koenbuyens/kalirouter" target="_blank">my github</a>.</p>
 
@@ -450,17 +444,17 @@ $ ./monitor.sh
 <li>Output is in the <code>dumps/output.pcap</code> file. You can stop monitoring by pressing Ctrl-C.</li>
 </ul>
 
-<h2 id="intercepting-communication-from-embedded-devices-android-apps-and-windows-applications">Intercepting Communication from Embedded Devices, Android Apps, and Windows Applications</h2>
+<h1 id="intercepting-communication-from-embedded-devices-android-apps-and-windows-applications">Intercepting Communication from Embedded Devices, Android Apps, and Windows Applications</h1>
 
 <p>After starting our monitor script, we can start monitoring the devices and applications that connect to our monitor network.</p>
 
-<h3 id="embedded-device">Embedded Device</h3>
+<h2 id="embedded-device">Embedded Device</h2>
 
 <p>We connect an embedded device to our Monitor Network, either wirelessly or via Ethernet cable. We then let the device do its job. In the example below, our embedded device (<code>10.0.0.38</code>) communicates via UDP to a mobile app in our main home network (<code>192.168.1.230</code>). We could have connected both devices to our monitor network (<code>10.0.0.0/8</code>) to intercept all communication.</p>
 
 <p><img src="/pics/example_embedded_wireshark.png" alt="Wireshark Logs All Traffic From Our Embedded Device" /></p>
 
-<h3 id="mobile-applications">Mobile Applications</h3>
+<h2 id="mobile-applications">Mobile Applications</h2>
 
 <p>Before we can start monitoring mobile applications, we must add the certificate of BurpSuite to the trust store of the Mobile Operating System as most mobile applications (and thick clients) nowadays validate the certificate.</p>
 
@@ -506,7 +500,7 @@ $ ./monitor.sh
 
 <p><strong>Note:</strong> To monitor applications that implement <a href="https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet" target="_blank">HSTS</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Public_Key_Pinning" target="_blank">HPKP</a> or <a href="https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning" target="_blank">Certificate Pinning</a>, we would need to <a href="https://finnwea.com/blog/bypassing-http-strict-transport-security-hsts" target="_blank">complete</a> <a href="https://github.com/iSECPartners/Android-SSL-TrustKiller" target="_blank">additional steps</a> (that are outside of the scope of this article).</p>
 
-<h3 id="windows-applications">Windows Applications</h3>
+<h2 id="windows-applications">Windows Applications</h2>
 
 <p>We can also use this to monitor communication of Windows applications by connecting our Windows machine to the same network and adding BurpSuite&rsquo;s certificate to the Windows trust store.</p>
 
@@ -526,7 +520,7 @@ $ ./monitor.sh
 <img src="/pics/example_windows_browserwireshark.png" alt="We monitor our browser" /></p></li>
 </ul>
 
-<h2 id="a-raspberry-pi-kali-router">A Raspberry Pi Kali Router</h2>
+<h1 id="a-raspberry-pi-kali-router">A Raspberry Pi Kali Router</h1>
 
 <p>As we wanted a portable solution, we applied the above set-up on a Raspberry Pi. You can download a Raspberry Pi Kali Linux image with the set-up <a href="mailto:koen+raspberrypi@buyens.org" target="_blank">here</a>. You most likely will need to apply the changes listed in the <a href="https://github.com/koenbuyens/kalirouter#automation" target="_blank">Automation</a> Section, especially adding the MAC addresses of your cards to the Network Manager configuration file.</p>
 
@@ -635,11 +629,11 @@ $ update-rc.d -f ssh enable 2 3 4 5
 <pre><code class="language-shell">$ git clone https://github.com/koenbuyens/kalirouter.git
 </code></pre>
 
-<h2 id="conclusion">Conclusion</h2>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>We transformed Kali into an intercepting router so that we can easily intercept communication between multiple devices.</p>
 
-<h2 id="references">References</h2>
+<h1 id="references">References</h1>
 
 <p>The following links helped me creating a wired/wireless router in Kali Linux.
 - <a href="https://www.psattack.com/articles/20160410/setting-up-a-wireless-access-point-in-kali/" target="_blank">https://www.psattack.com/articles/20160410/setting-up-a-wireless-access-point-in-kali/</a>
