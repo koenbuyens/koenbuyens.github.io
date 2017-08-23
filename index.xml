@@ -73,13 +73,13 @@ that
 
 &lt;p&gt;We configure Kali Linux as a proxy-aware router. Clients, such as embedded devices or mobile apps, make connections to their servers as they normally would, but interesting packets (e.g. HTTP and HTTPS packets) are intercepted by our Kali Linux machine and redirected to a proxy server (e.g. BurpSuite). All traffic passing through our router is monitored with &lt;a href=&#34;https://www.wireshark.org/&#34; target=&#34;_blank&#34;&gt;Wireshark&lt;/a&gt;. Both our Kali Linux machine and BurpSuite act as a transparent proxy as the clients are not aware of their existence. The main advantage of this set-up is that it reduces the configuration of the clients to a minimum. This setup is illustrated in the figure below.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/setup.png&#34; alt=&#34;Setup&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/setup.png&#34; alt=&#34;Setup&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Before configuring our Kali Linux machine, we need to configure VMWare and our network interfaces as follows.
 - We connect our Kali Linux machine running within &lt;a href=&#34;https://www.vmware.com/&#34; target=&#34;_blank&#34;&gt;VMWare&lt;/a&gt; to the network in bridged mode so that it is directly connected to the network the device/application/mobile phone that we want to monitor would normally connect to.
-&lt;img src=&#34;pics/vmbridged.png&#34; alt=&#34;Set up VMware in Bridged Mode&#34; /&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/vmbridged.png&#34; alt=&#34;Set up VMware in Bridged Mode&#34; /&gt;
 - We connect two adapters (Ethernet and WiFi) and give the USB connections to Kali. In the figure below, our adapters are the &lt;a href=&#34;https://www.amazon.com/Plugable-Gigabit-Ethernet-Network-Adapter/dp/B00AQM8586&#34; target=&#34;_blank&#34;&gt;Ethernet LAN Network Adapter ASIX AX88179&lt;/a&gt; and the &lt;a href=&#34;https://www.amazon.com/gp/product/B004Y6MIXS/ref=oh_aui_detailpage_o00_s00?ie=UTF8&amp;amp;psc=1&#34; target=&#34;_blank&#34;&gt;wireless B/G/N USB adapter Atheros UB91C&lt;/a&gt;. For WiFi, we could have used any adapter that is compatible with &lt;a href=&#34;http://www.wirelesshack.org/best-kali-linux-compatible-usb-adapter-dongles-2016.html&#34; target=&#34;_blank&#34;&gt;Linux&lt;/a&gt;, as long as it supports promiscuous mode.
-&lt;img src=&#34;pics/vmconnectdevices.png&#34; alt=&#34;Connect the adapters to the VMware machine&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/vmconnectdevices.png&#34; alt=&#34;Connect the adapters to the VMware machine&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The subsequent sections elaborate how we configure our Kali Linux machine as a router and how we monitor devices and applications by connecting them to the Kali Linux router.&lt;/p&gt;
 
@@ -98,7 +98,7 @@ that
 
 &lt;p&gt;Our Ethernet adapter will typically show up as &lt;code&gt;eth1&lt;/code&gt; while our WiFi adapter will typically show up as &lt;code&gt;wlan0&lt;/code&gt;. (&lt;code&gt;eth0&lt;/code&gt; is the interface that is configured by VMWare to give Kali access to the Internet).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/kalidevices.png&#34; alt=&#34;Interfaces in Kali&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/kalidevices.png&#34; alt=&#34;Interfaces in Kali&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We tell the &lt;a href=&#34;https://wiki.gnome.org/Projects/NetworkManager&#34; target=&#34;_blank&#34;&gt;network-manager&lt;/a&gt; service that we will manage the interfaces ourselves by adding the adapters MAC addresses to the unmanaged-devices section of the &lt;code&gt;/etc/NetworkManager/NetworkManager.conf&lt;/code&gt; file.&lt;/p&gt;
 
@@ -263,22 +263,22 @@ $ iptables -A FORWARD -s 172.16.0.0/12 -d burpip -i br0 -o eth0 -p tcp --dport b
 
 &lt;p&gt;We then configure BurpSuite as a transparent proxy on the machine (&lt;code&gt;burpip&lt;/code&gt;) and ports (&lt;code&gt;burp_http_port&lt;/code&gt; and &lt;code&gt;burp_https_port&lt;/code&gt;) referred to in the &lt;code&gt;iptables&lt;/code&gt; rules above. We start BurpSuite, go to the Proxy tab, click Options, and click Add.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/burpproxy.png&#34; alt=&#34;Add a New Interface to BurpSuite&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/burpproxy.png&#34; alt=&#34;Add a New Interface to BurpSuite&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;For HTTP traffic, we bind BurpSuite to port 80 (i.e. &lt;code&gt;burp_http_port&lt;/code&gt; in our &lt;code&gt;iptables&lt;/code&gt; rules) on all interfaces.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/burpsuite80.png&#34; alt=&#34;Bind BurpSuite to port 80&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite80.png&#34; alt=&#34;Bind BurpSuite to port 80&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We go to the request handling tab and enable support for &lt;a href=&#34;https://portswigger.net/burp/help/proxy_options_invisible.html&#34; target=&#34;_blank&#34;&gt;invisible proxying&lt;/a&gt;. This is necessary, as the clients are unaware of BurpSuite&amp;rsquo;s existence.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/burpsuite80_proxy.png&#34; alt=&#34;Enable Invisible Proxying for BurpSuite&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite80_proxy.png&#34; alt=&#34;Enable Invisible Proxying for BurpSuite&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;For HTTPS traffic, we bind BurpSuite to port 443 (i.e. &lt;code&gt;burp_https_port&lt;/code&gt; in our &lt;code&gt;iptables&lt;/code&gt; rules) on all interfaces.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/burpsuite443.png&#34; alt=&#34;Bind BurpSuite to port 443&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite443.png&#34; alt=&#34;Bind BurpSuite to port 443&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We go to the request handling tab, redirect traffic to port 443, force use of SSL, and enable support for invisible proxying.
-&lt;img src=&#34;pics/burpsuite443_proxy.png&#34; alt=&#34;Enable Invisible Proxying for BurpSuite&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite443_proxy.png&#34; alt=&#34;Enable Invisible Proxying for BurpSuite&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;automation&#34;&gt;Automation&lt;/h2&gt;
 
@@ -319,7 +319,7 @@ $ ./monitor.sh
 
 &lt;p&gt;We connect an embedded device to our Monitor Network, either wirelessly or via Ethernet cable. We then let the device do its job. In the example below, our embedded device (&lt;code&gt;10.0.0.38&lt;/code&gt;) communicates via UDP to a mobile app in our main home network (&lt;code&gt;192.168.1.230&lt;/code&gt;). We could have connected both devices to our monitor network (&lt;code&gt;10.0.0.0/8&lt;/code&gt;) to intercept all communication.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/example_embedded_wireshark.png&#34; alt=&#34;Wireshark Logs All Traffic From Our Embedded Device&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/example_embedded_wireshark.png&#34; alt=&#34;Wireshark Logs All Traffic From Our Embedded Device&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;mobile-applications&#34;&gt;Mobile Applications&lt;/h3&gt;
 
@@ -327,42 +327,42 @@ $ ./monitor.sh
 
 &lt;ol&gt;
 &lt;li&gt;We export BurpSuite&amp;rsquo;s certificate by clicking &lt;code&gt;Import/export CA certificate&lt;/code&gt; in the &lt;code&gt;Proxy&lt;/code&gt; tab.&lt;br /&gt;
-&lt;img src=&#34;pics/burpsuite_exportcert.png&#34; alt=&#34;Export the Certificate of BurpSuite&#34; /&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite_exportcert.png&#34; alt=&#34;Export the Certificate of BurpSuite&#34; /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;ul&gt;
 &lt;li&gt;We export the certificate as a DER file by selecting the &lt;code&gt;Certificate in DER format&lt;/code&gt; option.&lt;br /&gt;
-&lt;img src=&#34;pics/burpsuite_exportcertder.png&#34; alt=&#34;Export the Certificate of BurpSuite in DER format&#34; /&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/burpsuite_exportcertder.png&#34; alt=&#34;Export the Certificate of BurpSuite in DER format&#34; /&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;For Android apps, we add the certificate to the trust store of Android as follows.
 1. We first go to the security settings.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_importcertandroid.png&#34; alt=&#34;Import a Certificate in Android - Security Settings&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_importcertandroid.png&#34; alt=&#34;Import a Certificate in Android - Security Settings&#34; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;We then install a certificate from the SD card.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_importcertandroid2.png&#34; alt=&#34;Import a Certificate in Android - Install from SD card&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_importcertandroid2.png&#34; alt=&#34;Import a Certificate in Android - Install from SD card&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;We select the certificate file.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_importcertandroid3.png&#34; alt=&#34;Import a Certificate in Android - Select the certificate file&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_importcertandroid3.png&#34; alt=&#34;Import a Certificate in Android - Select the certificate file&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Finally, we give it a name.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_importcertandroid4.png&#34; alt=&#34;Import a Certificate in Android - Give a Name to the Certificate&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_importcertandroid4.png&#34; alt=&#34;Import a Certificate in Android - Give a Name to the Certificate&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;After importing the certificate, we are ready to monitor an application.
 1. We connect the mobile device to our Monitor Network. We use the password that we had set-up in our &lt;code&gt;hostapd&lt;/code&gt; configuration file.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_connect.png&#34; alt=&#34;Monitor Android Application - Connect to Monitor Network&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_connect.png&#34; alt=&#34;Monitor Android Application - Connect to Monitor Network&#34; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;We then start the application that we want to monitor. The example below shows the Amtrak application.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_app.png&#34; alt=&#34;Monitor Android Application - Start the Application&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_app.png&#34; alt=&#34;Monitor Android Application - Start the Application&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;We observe that BurpSuite receives HTTPS traffic from the Android App.&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_burp.png&#34; alt=&#34;BurpSuite Receives HTTPS Traffic From the Android App&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_burp.png&#34; alt=&#34;BurpSuite Receives HTTPS Traffic From the Android App&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;We also observe that wireshark logs all traffic (in this case of the Facebook app).&lt;br /&gt;
-&lt;img src=&#34;pics/example_mobile_wireshark.png&#34; alt=&#34;Wireshark Logs All Traffic From the Android App&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_mobile_wireshark.png&#34; alt=&#34;Wireshark Logs All Traffic From the Android App&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; To monitor applications that implement &lt;a href=&#34;https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet&#34; target=&#34;_blank&#34;&gt;HSTS&lt;/a&gt;, &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Public_Key_Pinning&#34; target=&#34;_blank&#34;&gt;HPKP&lt;/a&gt; or &lt;a href=&#34;https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning&#34; target=&#34;_blank&#34;&gt;Certificate Pinning&lt;/a&gt;, we would need to &lt;a href=&#34;https://finnwea.com/blog/bypassing-http-strict-transport-security-hsts&#34; target=&#34;_blank&#34;&gt;complete&lt;/a&gt; &lt;a href=&#34;https://github.com/iSECPartners/Android-SSL-TrustKiller&#34; target=&#34;_blank&#34;&gt;additional steps&lt;/a&gt; (that are outside of the scope of this article).&lt;/p&gt;
@@ -373,25 +373,25 @@ $ ./monitor.sh
 
 &lt;ol&gt;
 &lt;li&gt;We connect our Windows machine (via Ethernet) to our Monitor network.&lt;br /&gt;
-&lt;img src=&#34;pics/example_windows2.png&#34; alt=&#34;Windows is connected to our monitor network&#34; /&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_windows2.png&#34; alt=&#34;Windows is connected to our monitor network&#34; /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;We follow the steps that &lt;a href=&#34;https://parsiya.net/blog/2016-02-21-installing-burp-certificate-authority-in-windows-certificate-store/&#34; target=&#34;_blank&#34;&gt;Parsia outlined&lt;/a&gt; to import the certificate in the Windows Certificate store.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;We start the application that we are interested in, in this case just our browser.&lt;br /&gt;
-&lt;img src=&#34;pics/example_windows1.png&#34; alt=&#34;We monitor our browser&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_windows1.png&#34; alt=&#34;We monitor our browser&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Observe that both BurpSuite and Wireshark receive the traffic.
-&lt;img src=&#34;pics/example_windows_browserburp.png&#34; alt=&#34;We monitor our browser&#34; /&gt;
-&lt;img src=&#34;pics/example_windows_browserwireshark.png&#34; alt=&#34;We monitor our browser&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_windows_browserburp.png&#34; alt=&#34;We monitor our browser&#34; /&gt;
+&lt;img src=&#34;http://koen.buyens.org/pics/example_windows_browserwireshark.png&#34; alt=&#34;We monitor our browser&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;a-raspberry-pi-kali-router&#34;&gt;A Raspberry Pi Kali Router&lt;/h2&gt;
 
 &lt;p&gt;As we wanted a portable solution, we applied the above set-up on a Raspberry Pi. You can download a Raspberry Pi Kali Linux image with the set-up &lt;a href=&#34;mailto:koen+raspberrypi@buyens.org&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. You most likely will need to apply the changes listed in the &lt;a href=&#34;https://github.com/koenbuyens/kalirouter#automation&#34; target=&#34;_blank&#34;&gt;Automation&lt;/a&gt; Section, especially adding the MAC addresses of your cards to the Network Manager configuration file.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;pics/raspberrypisetup.jpg&#34; alt=&#34;Our Raspberry pi Kali Set-up&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://koen.buyens.org/pics/raspberrypisetup.jpg&#34; alt=&#34;Our Raspberry pi Kali Set-up&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;First, we download the latest Kali Linux image for the raspberry Pi at &lt;a href=&#34;https://www.offensive-security.com/kali-linux-arm-images/&#34; target=&#34;_blank&#34;&gt;Offensive Security&lt;/a&gt;.
 This image is most likely compressed with &lt;code&gt;xz&lt;/code&gt;, as it ends with the &lt;code&gt;xz&lt;/code&gt; file extension. We install the &lt;code&gt;xz&lt;/code&gt; compression tool and use it to extract the image. If the Kali image is not compressed with &lt;code&gt;xz&lt;/code&gt; (i.e. it has the &lt;code&gt;img&lt;/code&gt; file extension, we can skip this step).&lt;/p&gt;
