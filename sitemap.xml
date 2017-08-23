@@ -4,8 +4,68 @@
     
     
     <url>
+      <loc>http://koen.buyens.org/post/kalirouter/</loc>
+      <lastmod>2017-08-20T12:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/post/</loc>
+      <lastmod>2017-01-01T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/tags/interception/</loc>
+      <lastmod>2017-08-20T12:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/tags/kali/</loc>
+      <lastmod>2017-08-20T12:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
       <loc>http://koen.buyens.org/</loc>
       <lastmod>2017-04-03T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/tags/router/</loc>
+      <lastmod>2017-08-20T12:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/tags/</loc>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+      <loc>http://koen.buyens.org/tags/wireshark/</loc>
+      <lastmod>2017-08-20T12:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
